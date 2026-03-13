@@ -1,31 +1,33 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Kontroler;
 
 namespace Forme
 {
     public partial class FrmIzmeniRezervaciju : Form
     {
+        private int brojRezervacije;
+
         private Label lblNaslov;
         private Label lblDatumOd;
-        private Label lblDatumDo;
+        private Label lblBrojNoci;
 
         private DateTimePicker dtpDatumOd;
-        private DateTimePicker dtpDatumDo;
+        private NumericUpDown numBrojNoci;
 
         private Button btnSacuvaj;
         private Button btnOtkazi;
 
-        public DateTime NoviDatumOd { get; private set; }
-        public DateTime NoviDatumDo { get; private set; }
-
-        public FrmIzmeniRezervaciju(DateTime datumOd, DateTime datumDo)
+        public FrmIzmeniRezervaciju(int brojRezervacije, DateTime datumOd, int brojNoci)
         {
             InitializeComponent();
             InicijalizujIzgled();
 
+            this.brojRezervacije = brojRezervacije;
+
             dtpDatumOd.Value = datumOd;
-            dtpDatumDo.Value = datumDo;
+            numBrojNoci.Value = brojNoci;
         }
 
         private void InicijalizujIzgled()
@@ -38,7 +40,7 @@ namespace Forme
             BackColor = Color.FromArgb(245, 247, 250);
 
             lblNaslov = new Label();
-            lblNaslov.Text = "Izmena datuma rezervacije";
+            lblNaslov.Text = "Izmena rezervacije";
             lblNaslov.Font = new Font("Segoe UI", 16, FontStyle.Bold);
             lblNaslov.ForeColor = Color.FromArgb(32, 42, 68);
             lblNaslov.AutoSize = true;
@@ -53,14 +55,16 @@ namespace Forme
             dtpDatumOd.Location = new Point(160, 75);
             dtpDatumOd.Size = new Size(260, 30);
 
-            lblDatumDo = new Label();
-            lblDatumDo.Text = "Datum do:";
-            lblDatumDo.Location = new Point(35, 130);
-            lblDatumDo.AutoSize = true;
+            lblBrojNoci = new Label();
+            lblBrojNoci.Text = "Broj noći:";
+            lblBrojNoci.Location = new Point(35, 130);
+            lblBrojNoci.AutoSize = true;
 
-            dtpDatumDo = new DateTimePicker();
-            dtpDatumDo.Location = new Point(160, 125);
-            dtpDatumDo.Size = new Size(260, 30);
+            numBrojNoci = new NumericUpDown();
+            numBrojNoci.Location = new Point(160, 125);
+            numBrojNoci.Size = new Size(120, 30);
+            numBrojNoci.Minimum = 1;
+            numBrojNoci.Maximum = 365;
 
             btnSacuvaj = new Button();
             btnSacuvaj.Text = "Sačuvaj";
@@ -85,25 +89,36 @@ namespace Forme
             Controls.Add(lblNaslov);
             Controls.Add(lblDatumOd);
             Controls.Add(dtpDatumOd);
-            Controls.Add(lblDatumDo);
-            Controls.Add(dtpDatumDo);
+            Controls.Add(lblBrojNoci);
+            Controls.Add(numBrojNoci);
             Controls.Add(btnSacuvaj);
             Controls.Add(btnOtkazi);
         }
 
         private void BtnSacuvaj_Click(object sender, EventArgs e)
         {
-            if (dtpDatumDo.Value.Date <= dtpDatumOd.Value.Date)
+            try
             {
-                MessageBox.Show("Datum do mora biti veći od datuma od.");
-                return;
+                DateTime datumOd = dtpDatumOd.Value.Date;
+                int brojNoci = (int)numBrojNoci.Value;
+
+                DateTime datumDo = datumOd.AddDays(brojNoci);
+
+                Kontroler.Kontroler.Instance.IzmeniRezervaciju(
+                    brojRezervacije,
+                    datumOd,
+                    datumDo
+                );
+
+                MessageBox.Show("Rezervacija uspešno izmenjena.");
+
+                DialogResult = DialogResult.OK;
+                Close();
             }
-
-            NoviDatumOd = dtpDatumOd.Value.Date;
-            NoviDatumDo = dtpDatumDo.Value.Date;
-
-            DialogResult = DialogResult.OK;
-            Close();
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void BtnOtkazi_Click(object sender, EventArgs e)

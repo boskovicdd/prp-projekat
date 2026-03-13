@@ -907,7 +907,7 @@ namespace Forme
 
                 dgvGosti.DataSource = null;
                 dgvGosti.Columns.Clear();
-                
+
                 var podaciZaPrikaz = gosti.Select(g => new
                 {
                     ID = g.GostId,
@@ -1120,12 +1120,66 @@ namespace Forme
 
         private void BtnIzmeniRezervaciju_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Izmena rezervacije još nije dodata.");
+            if (dgvRezervacije.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Selektuj rezervaciju.");
+                return;
+            }
+
+            int brojRezervacije = Convert.ToInt32(
+    dgvRezervacije.SelectedRows[0].Cells["BrojRezervacije"].Value
+);
+
+            DateTime datumOd = Convert.ToDateTime(
+                dgvRezervacije.SelectedRows[0].Cells["DatumOd"].Value
+            );
+
+            int brojNoci = Convert.ToInt32(
+                dgvRezervacije.SelectedRows[0].Cells["BrojNoci"].Value
+            );
+
+            FrmIzmeniRezervaciju forma =
+                new FrmIzmeniRezervaciju(brojRezervacije, datumOd, brojNoci);
+
+            if (forma.ShowDialog() == DialogResult.OK)
+            {
+                UcitajRezervacije();
+            }
         }
 
         private void BtnObrisiRezervaciju_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Brisanje rezervacije još nije dodato.");
+            if (dgvRezervacije.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Selektuj rezervaciju.");
+                return;
+            }
+
+            int brojRezervacije = Convert.ToInt32(
+                dgvRezervacije.SelectedRows[0].Cells["BrojRezervacije"].Value
+            );
+
+            DialogResult rezultat = MessageBox.Show(
+                "Da li ste sigurni da želite da obrišete rezervaciju?",
+                "Potvrda",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (rezultat == DialogResult.Yes)
+            {
+                try
+                {
+                    Kontroler.Kontroler.Instance.ObrisiRezervaciju(brojRezervacije);
+
+                    MessageBox.Show("Rezervacija obrisana.");
+                    UcitajRezervacije();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
         }
 
         private void PrikaziStranicuRezervacije()
@@ -1135,7 +1189,7 @@ namespace Forme
             Panel kartica = new Panel
             {
                 BackColor = Color.White,
-                Size = new Size(1350, 650),
+                Size = new Size(1450, 650),
                 Location = new Point(20, 20),
                 BorderStyle = BorderStyle.FixedSingle
             };
@@ -1232,21 +1286,23 @@ namespace Forme
                 dgvRezervacije.DataSource = null;
                 dgvRezervacije.Columns.Clear();
                 dgvRezervacije.DataSource = rezervacije;
-                
-
+                dgvRezervacije.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dgvRezervacije.Columns["BrojRezervacije"].HeaderText = "ID";
                 dgvRezervacije.Columns["Grad"].HeaderText = "Grad";
-                dgvRezervacije.Columns["AdresaHotela"].HeaderText = "Hotel / Adresa";
+                dgvRezervacije.Columns["Hotel"].HeaderText = "Hotel";
+                dgvRezervacije.Columns["Zvezdice"].HeaderText = "Zvezdice";
                 dgvRezervacije.Columns["BrojSobe"].HeaderText = "Soba";
-                dgvRezervacije.Columns["ImeGosta"].HeaderText = "Gost";
+                dgvRezervacije.Columns["ImeGosta"].HeaderText = "Naziv firme / Ime gosta";
                 dgvRezervacije.Columns["VrstaGosta"].HeaderText = "Tip gosta";
                 dgvRezervacije.Columns["DatumOd"].HeaderText = "Datum od";
                 dgvRezervacije.Columns["DatumDo"].HeaderText = "Datum do";
                 dgvRezervacije.Columns["BrojNoci"].HeaderText = "Broj noći";
                 dgvRezervacije.Columns["UkupnaCena"].HeaderText = "Ukupna cena";
+
                 dgvRezervacije.Columns["BrojRezervacije"].FillWeight = 12;
                 dgvRezervacije.Columns["Grad"].FillWeight = 18;
-                dgvRezervacije.Columns["AdresaHotela"].FillWeight = 28;
+                dgvRezervacije.Columns["Hotel"].FillWeight = 28;
+                dgvRezervacije.Columns["Zvezdice"].FillWeight = 16;
                 dgvRezervacije.Columns["BrojSobe"].FillWeight = 12;
                 dgvRezervacije.Columns["ImeGosta"].FillWeight = 24;
                 dgvRezervacije.Columns["VrstaGosta"].FillWeight = 18;
@@ -1254,6 +1310,7 @@ namespace Forme
                 dgvRezervacije.Columns["DatumDo"].FillWeight = 18;
                 dgvRezervacije.Columns["BrojNoci"].FillWeight = 14;
                 dgvRezervacije.Columns["UkupnaCena"].FillWeight = 18;
+
             }
             catch (Exception ex)
             {

@@ -88,7 +88,8 @@ namespace Forme
             dgvHoteli.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             dgvHoteli.RowHeadersVisible = false;
             dgvHoteli.SelectionChanged += DgvHoteli_SelectionChanged;
-
+            dgvHoteli.AllowUserToResizeColumns = false;
+            dgvHoteli.AllowUserToResizeRows = false;
             lblSobe = new Label();
             lblSobe.Text = "Slobodne sobe za izabrani hotel";
             lblSobe.Font = new Font("Segoe UI", 14, FontStyle.Bold);
@@ -107,6 +108,8 @@ namespace Forme
             dgvSobe.AllowUserToDeleteRows = false;
             dgvSobe.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             dgvSobe.RowHeadersVisible = false;
+            dgvSobe.AllowUserToResizeColumns = false;
+            dgvSobe.AllowUserToResizeRows = false;
 
             lblGost = new Label();
             lblGost.Text = "Gost";
@@ -190,14 +193,21 @@ namespace Forme
                 dgvHoteli.DataSource = hoteli;
 
                 foreach (DataGridViewColumn kolona in dgvHoteli.Columns)
+                {
                     kolona.SortMode = DataGridViewColumnSortMode.NotSortable;
+                    kolona.Resizable = DataGridViewTriState.False;
+                }
 
-                dgvHoteli.Columns["HID"].HeaderText = "ID";
-                dgvHoteli.Columns["Naziv"].HeaderText = "Naziv";
-                dgvHoteli.Columns["Adresa"].HeaderText = "Adresa";
+                dgvHoteli.Columns["HID"].Visible = false;
+                dgvHoteli.Columns["Naziv"].HeaderText = "Hotel";
                 dgvHoteli.Columns["BrojZvezdica"].HeaderText = "Zvezdice";
 
-                dgvHoteli.Columns["BrojZvezdica"].DefaultCellStyle.Format = "";
+                if (dgvHoteli.Columns.Contains("Adresa"))
+                    dgvHoteli.Columns["Adresa"].Visible = false;
+
+                dgvHoteli.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dgvHoteli.Columns["Naziv"].FillWeight = 70;
+                dgvHoteli.Columns["BrojZvezdica"].FillWeight = 30;
             }
             catch (Exception ex)
             {

@@ -10,7 +10,7 @@
 
         public override string ToString()
         {
-            return $"{Adresa} ({BrojZvezdica}★, {Grad?.Naziv})";
+            return $"{Naziv} ({new string('★', BrojZvezdica)}, {Grad?.Naziv})";
         }
     }
 }
