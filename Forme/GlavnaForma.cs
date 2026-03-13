@@ -24,6 +24,10 @@ namespace Forme
 
         private DataGridView dgvGradovi;
         private DataGridView dgvHoteli;
+        private DataGridView dgvGosti;
+        private DataGridView dgvRezervacije;
+        private ComboBox cmbTipGostaFilter;
+        private TextBox txtPretragaGostiju;
         public GlavnaForma()
         {
             InitializeComponent();
@@ -723,6 +727,539 @@ namespace Forme
         {
             UcitajHoteleUTabelu();
         }
+
+        private void PrikaziStranicuGosti()
+        {
+            panelSadrzaj.Controls.Clear();
+
+            Panel kartica = new Panel
+            {
+                BackColor = Color.White,
+                Size = new Size(1150, 620),
+                Location = new Point(20, 20),
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            Label lblNaslov = new Label
+            {
+                Text = "Upravljanje gostima",
+                Font = new Font("Segoe UI", 20, FontStyle.Bold),
+                ForeColor = Color.FromArgb(32, 42, 68),
+                AutoSize = true,
+                Location = new Point(30, 25)
+            };
+
+            Label lblTip = new Label
+            {
+                Text = "Tip gosta:",
+                Font = new Font("Segoe UI", 10),
+                AutoSize = true,
+                Location = new Point(32, 85)
+            };
+
+            cmbTipGostaFilter = new ComboBox
+            {
+                Location = new Point(32, 110),
+                Size = new Size(200, 30),
+                DropDownStyle = ComboBoxStyle.DropDownList
+            };
+            cmbTipGostaFilter.Items.Add("Svi");
+            cmbTipGostaFilter.Items.Add("Fizičko lice");
+            cmbTipGostaFilter.Items.Add("Pravno lice");
+            cmbTipGostaFilter.SelectedIndex = 0;
+
+            Label lblPretraga = new Label
+            {
+                Text = "Pretraga:",
+                Font = new Font("Segoe UI", 10),
+                AutoSize = true,
+                Location = new Point(255, 85)
+            };
+
+            txtPretragaGostiju = new TextBox
+            {
+                Location = new Point(255, 110),
+                Size = new Size(280, 30)
+            };
+
+            Button btnPretrazi = new Button
+            {
+                Text = "Pretraži",
+                Size = new Size(120, 40),
+                Location = new Point(555, 103),
+                BackColor = Color.FromArgb(32, 42, 68),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnPretrazi.FlatAppearance.BorderSize = 0;
+            btnPretrazi.Click += BtnPretraziGoste_Click;
+
+            Button btnPonisti = new Button
+            {
+                Text = "Poništi filter",
+                Size = new Size(140, 40),
+                Location = new Point(685, 103),
+                BackColor = Color.Gray,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnPonisti.FlatAppearance.BorderSize = 0;
+            btnPonisti.Click += BtnPonistiFilterGostiju_Click;
+
+            Button btnDodajFizicko = new Button
+            {
+                Text = "Dodaj fizičko lice",
+                Size = new Size(150, 42),
+                Location = new Point(32, 165),
+                BackColor = Color.FromArgb(32, 42, 68),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnDodajFizicko.FlatAppearance.BorderSize = 0;
+            btnDodajFizicko.Click += BtnDodajFizickoLice_Click;
+
+            Button btnDodajPravno = new Button
+            {
+                Text = "Dodaj pravno lice",
+                Size = new Size(150, 42),
+                Location = new Point(192, 165),
+                BackColor = Color.FromArgb(54, 74, 114),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnDodajPravno.FlatAppearance.BorderSize = 0;
+            btnDodajPravno.Click += BtnDodajPravnoLice_Click;
+
+            Button btnIzmeni = new Button
+            {
+                Text = "Izmeni",
+                Size = new Size(130, 42),
+                Location = new Point(352, 165),
+                BackColor = Color.FromArgb(70, 100, 140),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnIzmeni.FlatAppearance.BorderSize = 0;
+            btnIzmeni.Click += BtnIzmeniGosta_Click;
+
+            Button btnObrisi = new Button
+            {
+                Text = "Obriši",
+                Size = new Size(130, 42),
+                Location = new Point(492, 165),
+                BackColor = Color.FromArgb(160, 50, 50),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnObrisi.FlatAppearance.BorderSize = 0;
+            btnObrisi.Click += BtnObrisiGosta_Click;
+
+            Button btnOsvezi = new Button
+            {
+                Text = "Osveži",
+                Size = new Size(130, 42),
+                Location = new Point(632, 165),
+                BackColor = Color.Gray,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnOsvezi.FlatAppearance.BorderSize = 0;
+            btnOsvezi.Click += BtnOsveziGoste_Click;
+
+            dgvGosti = new DataGridView
+            {
+                Location = new Point(32, 230),
+                Size = new Size(1080, 340),
+                BackgroundColor = Color.White,
+                BorderStyle = BorderStyle.None,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                MultiSelect = false,
+                ReadOnly = true,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            };
+
+            kartica.Controls.Add(lblNaslov);
+            kartica.Controls.Add(lblTip);
+            kartica.Controls.Add(cmbTipGostaFilter);
+            kartica.Controls.Add(lblPretraga);
+            kartica.Controls.Add(txtPretragaGostiju);
+            kartica.Controls.Add(btnPretrazi);
+            kartica.Controls.Add(btnPonisti);
+            kartica.Controls.Add(btnDodajFizicko);
+            kartica.Controls.Add(btnDodajPravno);
+            kartica.Controls.Add(btnIzmeni);
+            kartica.Controls.Add(btnObrisi);
+            kartica.Controls.Add(btnOsvezi);
+            kartica.Controls.Add(dgvGosti);
+
+            panelSadrzaj.Controls.Add(kartica);
+
+            UcitajGosteUTabelu();
+        }
+
+        private void UcitajGosteUTabelu()
+        {
+            try
+            {
+                var gosti = Kontroler.Kontroler.Instance.DohvatiSveGoste();
+
+                dgvGosti.DataSource = null;
+                dgvGosti.Columns.Clear();
+                
+                var podaciZaPrikaz = gosti.Select(g => new
+                {
+                    ID = g.GostId,
+                    VrstaGosta = g is FizickoLice ? "Fizičko lice" : "Pravno lice",
+                    Naziv = g is FizickoLice fl ? $"{fl.Ime} {fl.Prezime}" : ((PravnoLice)g).NazivFirme,
+                    g.Email,
+                    g.Telefon,
+                    IdentifikacioniBroj = g is FizickoLice fl2 ? fl2.BrojDokumentacije : ((PravnoLice)g).PIB
+                }).ToList();
+
+                dgvGosti.DataSource = podaciZaPrikaz;
+
+                dgvGosti.Columns["ID"].HeaderText = "ID";
+                dgvGosti.Columns["VrstaGosta"].HeaderText = "Tip gosta";
+                dgvGosti.Columns["Naziv"].HeaderText = "Naziv/Ime prezime";
+                dgvGosti.Columns["Email"].HeaderText = "Email";
+                dgvGosti.Columns["Telefon"].HeaderText = "Telefon";
+                dgvGosti.Columns["IdentifikacioniBroj"].HeaderText = "Dokument / PIB";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Greška pri učitavanju gostiju: " + ex.Message);
+            }
+        }
+
+        private Gost VratiSelektovanogGosta()
+        {
+            if (dgvGosti == null || dgvGosti.CurrentRow == null)
+                return null;
+
+            int gostId = Convert.ToInt32(dgvGosti.CurrentRow.Cells["ID"].Value);
+            var gosti = Kontroler.Kontroler.Instance.DohvatiSveGoste();
+
+            return gosti.FirstOrDefault(g => g.GostId == gostId);
+        }
+
+        private void BtnPretraziGoste_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string tip = cmbTipGostaFilter.SelectedItem?.ToString() ?? "Svi";
+                string kriterijum = txtPretragaGostiju.Text.Trim();
+
+                var gosti = Kontroler.Kontroler.Instance.PretraziGoste(tip, kriterijum);
+
+                dgvGosti.DataSource = null;
+                dgvGosti.Columns.Clear();
+
+                var podaciZaPrikaz = gosti.Select(g => new
+                {
+                    ID = g.GostId,
+                    VrstaGosta = g is FizickoLice ? "Fizičko lice" : "Pravno lice",
+                    Naziv = g is FizickoLice fl ? $"{fl.Ime} {fl.Prezime}" : ((PravnoLice)g).NazivFirme,
+                    g.Email,
+                    g.Telefon,
+                    IdentifikacioniBroj = g is FizickoLice fl2 ? fl2.BrojDokumentacije : ((PravnoLice)g).PIB
+                }).ToList();
+
+                dgvGosti.DataSource = podaciZaPrikaz;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Greška pri pretrazi gostiju: " + ex.Message);
+            }
+        }
+
+        private void BtnPonistiFilterGostiju_Click(object sender, EventArgs e)
+        {
+            cmbTipGostaFilter.SelectedIndex = 0;
+            txtPretragaGostiju.Text = "";
+            UcitajGosteUTabelu();
+        }
+
+        private void BtnDodajFizickoLice_Click(object sender, EventArgs e)
+        {
+            FrmSacuvajFizickoLice forma = new FrmSacuvajFizickoLice();
+
+            if (forma.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    Kontroler.Kontroler.Instance.UnesiFizickoLice(forma.FizickoLiceZaCuvanje);
+                    UcitajGosteUTabelu();
+                    MessageBox.Show("Fizičko lice je uspešno dodato.");
+                }
+                catch (Microsoft.Data.SqlClient.SqlException ex)
+                {
+                    MessageBox.Show(ex.Message, "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void BtnDodajPravnoLice_Click(object sender, EventArgs e)
+        {
+            FrmSacuvajPravnoLice forma = new FrmSacuvajPravnoLice();
+
+            if (forma.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    Kontroler.Kontroler.Instance.UnesiPravnoLice(forma.PravnoLiceZaCuvanje);
+                    UcitajGosteUTabelu();
+                    MessageBox.Show("Pravno lice je uspešno dodato.");
+                }
+                catch (Microsoft.Data.SqlClient.SqlException ex)
+                {
+                    MessageBox.Show(ex.Message, "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void BtnIzmeniGosta_Click(object sender, EventArgs e)
+        {
+            Gost selektovaniGost = VratiSelektovanogGosta();
+
+            if (selektovaniGost == null)
+            {
+                MessageBox.Show("Selektuj gosta kojeg želiš da izmeniš.");
+                return;
+            }
+
+            try
+            {
+                if (selektovaniGost is FizickoLice)
+                {
+                    FizickoLice fizicko = Kontroler.Kontroler.Instance.DohvatiFizickoLicePoId(selektovaniGost.GostId);
+                    FrmSacuvajFizickoLice forma = new FrmSacuvajFizickoLice(fizicko);
+
+                    if (forma.ShowDialog() == DialogResult.OK)
+                    {
+                        Kontroler.Kontroler.Instance.IzmeniFizickoLice(forma.FizickoLiceZaCuvanje);
+                        UcitajGosteUTabelu();
+                        MessageBox.Show("Fizičko lice je uspešno izmenjeno.");
+                    }
+                }
+                else if (selektovaniGost is PravnoLice)
+                {
+                    PravnoLice pravno = Kontroler.Kontroler.Instance.DohvatiPravnoLicePoId(selektovaniGost.GostId);
+                    FrmSacuvajPravnoLice forma = new FrmSacuvajPravnoLice(pravno);
+
+                    if (forma.ShowDialog() == DialogResult.OK)
+                    {
+                        Kontroler.Kontroler.Instance.IzmeniPravnoLice(forma.PravnoLiceZaCuvanje);
+                        UcitajGosteUTabelu();
+                        MessageBox.Show("Pravno lice je uspešno izmenjeno.");
+                    }
+                }
+            }
+            catch (Microsoft.Data.SqlClient.SqlException ex)
+            {
+                MessageBox.Show(ex.Message, "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void BtnObrisiGosta_Click(object sender, EventArgs e)
+        {
+            Gost selektovaniGost = VratiSelektovanogGosta();
+
+            if (selektovaniGost == null)
+            {
+                MessageBox.Show("Selektuj gosta kojeg želiš da obrišeš.");
+                return;
+            }
+
+            DialogResult rezultat = MessageBox.Show(
+                $"Da li si siguran da želiš da obrišeš gosta sa ID = {selektovaniGost.GostId}?",
+                "Potvrda brisanja",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (rezultat == DialogResult.Yes)
+            {
+                try
+                {
+                    Kontroler.Kontroler.Instance.ObrisiGosta(selektovaniGost.GostId);
+                    UcitajGosteUTabelu();
+                    MessageBox.Show("Gost je uspešno obrisan.");
+                }
+                catch (Microsoft.Data.SqlClient.SqlException ex)
+                {
+                    MessageBox.Show(ex.Message, "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void BtnOsveziGoste_Click(object sender, EventArgs e)
+        {
+            UcitajGosteUTabelu();
+        }
+        private void BtnOsveziRezervacije_Click(object sender, EventArgs e)
+        {
+            UcitajRezervacije();
+        }
+
+        private void BtnIzmeniRezervaciju_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Izmena rezervacije još nije dodata.");
+        }
+
+        private void BtnObrisiRezervaciju_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Brisanje rezervacije još nije dodato.");
+        }
+
+        private void PrikaziStranicuRezervacije()
+        {
+            panelSadrzaj.Controls.Clear();
+
+            Panel kartica = new Panel
+            {
+                BackColor = Color.White,
+                Size = new Size(1350, 650),
+                Location = new Point(20, 20),
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            Label lblNaslov = new Label
+            {
+                Text = "Pregled rezervacija",
+                Font = new Font("Segoe UI", 20, FontStyle.Bold),
+                ForeColor = Color.FromArgb(32, 42, 68),
+                AutoSize = true,
+                Location = new Point(30, 25)
+            };
+
+            Button btnNova = new Button
+            {
+                Text = "Nova rezervacija",
+                Size = new Size(180, 42),
+                Location = new Point(30, 85),
+                BackColor = Color.FromArgb(32, 42, 68),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnNova.FlatAppearance.BorderSize = 0;
+            btnNova.Click += BtnNovaRezervacija_Click;
+
+            Button btnIzmeni = new Button
+            {
+                Text = "Izmeni datum",
+                Size = new Size(160, 42),
+                Location = new Point(220, 85),
+                BackColor = Color.FromArgb(70, 100, 140),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnIzmeni.FlatAppearance.BorderSize = 0;
+            btnIzmeni.Click += BtnIzmeniRezervaciju_Click;
+
+            Button btnObrisi = new Button
+            {
+                Text = "Obriši",
+                Size = new Size(140, 42),
+                Location = new Point(390, 85),
+                BackColor = Color.FromArgb(160, 50, 50),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnObrisi.FlatAppearance.BorderSize = 0;
+            btnObrisi.Click += BtnObrisiRezervaciju_Click;
+
+            Button btnOsvezi = new Button
+            {
+                Text = "Osveži",
+                Size = new Size(140, 42),
+                Location = new Point(540, 85),
+                BackColor = Color.Gray,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnOsvezi.FlatAppearance.BorderSize = 0;
+            btnOsvezi.Click += BtnOsveziRezervacije_Click;
+
+            dgvRezervacije = new DataGridView
+            {
+                Location = new Point(30, 150),
+                Size = new Size(1290, 450),
+                BackgroundColor = Color.White,
+                BorderStyle = BorderStyle.None,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                MultiSelect = false,
+                ReadOnly = true,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells,
+                RowHeadersVisible = false
+            };
+
+            kartica.Controls.Add(lblNaslov);
+            kartica.Controls.Add(btnNova);
+            kartica.Controls.Add(btnIzmeni);
+            kartica.Controls.Add(btnObrisi);
+            kartica.Controls.Add(btnOsvezi);
+            kartica.Controls.Add(dgvRezervacije);
+
+            panelSadrzaj.Controls.Add(kartica);
+
+            UcitajRezervacije();
+        }
+        private void UcitajRezervacije()
+        {
+            try
+            {
+                var rezervacije = Kontroler.Kontroler.Instance.DohvatiSveRezervacije();
+
+                dgvRezervacije.DataSource = null;
+                dgvRezervacije.Columns.Clear();
+                dgvRezervacije.DataSource = rezervacije;
+                
+
+                dgvRezervacije.Columns["BrojRezervacije"].HeaderText = "ID";
+                dgvRezervacije.Columns["Grad"].HeaderText = "Grad";
+                dgvRezervacije.Columns["AdresaHotela"].HeaderText = "Hotel / Adresa";
+                dgvRezervacije.Columns["BrojSobe"].HeaderText = "Soba";
+                dgvRezervacije.Columns["ImeGosta"].HeaderText = "Gost";
+                dgvRezervacije.Columns["VrstaGosta"].HeaderText = "Tip gosta";
+                dgvRezervacije.Columns["DatumOd"].HeaderText = "Datum od";
+                dgvRezervacije.Columns["DatumDo"].HeaderText = "Datum do";
+                dgvRezervacije.Columns["BrojNoci"].HeaderText = "Broj noći";
+                dgvRezervacije.Columns["UkupnaCena"].HeaderText = "Ukupna cena";
+                dgvRezervacije.Columns["BrojRezervacije"].FillWeight = 12;
+                dgvRezervacije.Columns["Grad"].FillWeight = 18;
+                dgvRezervacije.Columns["AdresaHotela"].FillWeight = 28;
+                dgvRezervacije.Columns["BrojSobe"].FillWeight = 12;
+                dgvRezervacije.Columns["ImeGosta"].FillWeight = 24;
+                dgvRezervacije.Columns["VrstaGosta"].FillWeight = 18;
+                dgvRezervacije.Columns["DatumOd"].FillWeight = 18;
+                dgvRezervacije.Columns["DatumDo"].FillWeight = 18;
+                dgvRezervacije.Columns["BrojNoci"].FillWeight = 14;
+                dgvRezervacije.Columns["UkupnaCena"].FillWeight = 18;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
         private void ResetujBojeDugmadi()
         {
             btnDashboard.BackColor = Color.FromArgb(32, 42, 68);
@@ -743,11 +1280,23 @@ namespace Forme
 
         private void BtnNovaRezervacija_Click(object sender, EventArgs e)
         {
-            ResetujBojeDugmadi();
-            btnNovaRezervacija.BackColor = Color.FromArgb(54, 74, 114);
-            lblNaslovAplikacije.Text = "Nova rezervacija";
-            PrikaziStranicuPlaceholder("Nova rezervacija",
-                "Ovde ćemo sledeće napraviti ceo flow:\n\n- unos datuma i broja gostiju\n- izbor hotela\n- izbor sobe\n- izbor postojećeg ili novog gosta\n- potvrda rezervacije");
+            FrmPretragaRezervacije formaPretraga = new FrmPretragaRezervacije();
+
+            if (formaPretraga.ShowDialog() == DialogResult.OK)
+            {
+                FrmNovaRezervacija formaNova = new FrmNovaRezervacija(
+                    formaPretraga.DatumOd,
+                    formaPretraga.BrojNoci,
+                    formaPretraga.IzabraniGrad,
+                    formaPretraga.BrojGostiju
+                );
+
+                if (formaNova.ShowDialog() == DialogResult.OK)
+                {
+                    if (dgvRezervacije != null)
+                        UcitajRezervacije();
+                }
+            }
         }
 
         private void BtnPregledRezervacija_Click(object sender, EventArgs e)
@@ -755,8 +1304,8 @@ namespace Forme
             ResetujBojeDugmadi();
             btnPregledRezervacija.BackColor = Color.FromArgb(54, 74, 114);
             lblNaslovAplikacije.Text = "Pregled rezervacija";
-            PrikaziStranicuPlaceholder("Pregled rezervacija",
-                "Ovde ćemo napraviti tabelarni pregled rezervacija sa filtriranjem i detaljima.");
+
+            PrikaziStranicuRezervacije();
         }
 
         private void BtnGosti_Click(object sender, EventArgs e)
@@ -764,8 +1313,7 @@ namespace Forme
             ResetujBojeDugmadi();
             btnGosti.BackColor = Color.FromArgb(54, 74, 114);
             lblNaslovAplikacije.Text = "Gosti";
-            PrikaziStranicuPlaceholder("Gosti",
-                "Ovde ćemo napraviti pregled gostiju i posebne forme za dodavanje i izmenu fizičkog i pravnog lica.");
+            PrikaziStranicuGosti();
         }
 
         private void BtnHoteli_Click(object sender, EventArgs e)
