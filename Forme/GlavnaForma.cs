@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Domen;
+using Kontroler;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using Domen;
-using Kontroler;
 
 namespace Forme
 {
@@ -1341,17 +1342,37 @@ namespace Forme
 
             if (formaPretraga.ShowDialog() == DialogResult.OK)
             {
-                FrmNovaRezervacija formaNova = new FrmNovaRezervacija(
-                    formaPretraga.DatumOd,
-                    formaPretraga.BrojNoci,
-                    formaPretraga.IzabraniGrad,
-                    formaPretraga.BrojGostiju
-                );
-
-                if (formaNova.ShowDialog() == DialogResult.OK)
+                try
                 {
-                    if (dgvRezervacije != null)
-                        UcitajRezervacije();
+                    DataTable hoteli = Kontroler.Kontroler.Instance.DohvatiDostupneHotele(
+                        formaPretraga.IzabraniGrad.GradId,
+                        formaPretraga.DatumOd,
+                        formaPretraga.BrojNoci,
+                        formaPretraga.BrojGostiju
+                    );
+
+                    if (hoteli.Rows.Count == 0)
+                    {
+                        MessageBox.Show("Nema slobodnih soba za izabrani termin.");
+                        return;
+                    }
+
+                    FrmNovaRezervacija formaNova = new FrmNovaRezervacija(
+                        formaPretraga.DatumOd,
+                        formaPretraga.BrojNoci,
+                        formaPretraga.IzabraniGrad,
+                        formaPretraga.BrojGostiju
+                    );
+
+                    if (formaNova.ShowDialog() == DialogResult.OK)
+                    {
+                        if (dgvRezervacije != null)
+                            UcitajRezervacije();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
                 }
             }
         }
